@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+    integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg=="
+    crossorigin="anonymous" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.11.0/mdb.min.css" rel="stylesheet" />
+  <title>FitApp</title>
+  <style type="text/css">
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, Sans-serif;
+      /* background: #3f6388; */
+      background-image: url("https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/02/fitness-tips-1645774618.jpg");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+
+    }
+
+    .container {
+      padding: 5px;
+    }
+
+    .flex-wrap {
+      display: flex;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    label {
+      display: inline-block;
+      font-weight: bold;
+    }
+
+    input {
+      border: none;
+    }
+
+    #bmi-form,
+    .results-wrap {
+      padding: 2rem !important;
+    }
+
+    @media only screen and (max-width: 500px) {
+
+      #bmi-form,
+      .results-wrap {
+        padding: .5rem !important;
+      }
+    }
+
+    .flex-wrap#calc-container {
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      width: 80% !important;
+      max-height: 400px !important;
+    }
+
+    @media only screen and (max-width: 900px) {
+      .flex-wrap#calc-container {
+        flex-direction: column;
+      }
+    }
+
+    form {
+      flex: 1 1 40%;
+      color: black;
+      margin: 1rem !important;
+      text-align: center;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 0.3);
+    }
+
+    .form-group {
+      margin: 1rem 0 !important;
+      width: 100% !important;
+    }
+
+    #imperial {
+      display: none !important;
+    }
+
+    input.height-usa {
+      width: 50px !important;
+    }
+
+    input[type="button"] {
+      padding: 5px;
+      background-color: #4895ff;
+      border: none;
+      color: white;
+      border-radius: 2px;
+    }
+
+    input[type="button"]:hover {
+      background-color: #64778d;
+      cursor: pointer;
+    }
+
+    .results-wrap {
+      flex: 0 1 40%;
+      color: black;
+      padding: 1rem;
+      margin: 1rem;
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 12px;
+      border: 1px solid rgba(209, 213, 219, 0.3);
+    }
+
+    #results {
+      display: none;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 80%;
+    }
+
+    @media only screen and (max-width: 768px) {
+      #results {
+        flex-direction: column;
+      }
+    }
+
+    #results>ul {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: left;
+    }
+
+    @media only screen and (max-width: 768px) {
+      #results>ul {
+        text-align: center;
+        padding: 1rem 0;
+      }
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    label.visually-hidden {
+      border: 0;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+    #error-msg-wrap {
+      border: 1px solid red;
+      padding: 5px;
+      display: none;
+      margin-top: .5rem;
+    }
+
+    #error-msg-txt {
+      color: red;
+    }
+
+    .colored-circle {
+      background-color: #fff;
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      border: none;
+      margin: 0 auto;
+      box-shadow: 1px 1px 4px #333;
+    }
+
+
+    /* Animations */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      25% {
+        opacity: .1;
+      }
+
+      50% {
+        opacity: .8;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+
+    #navbar {
+      overflow: hidden;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 0 0 200px rgba(255, 255, 255, 0.05);
+      padding: 20px 10px;
+      transition: 0.4s;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 99;
+    }
+
+    #navbar a {
+      float: left;
+      color: white;
+      text-align: center;
+      padding: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      line-height: 25px;
+      border-radius: 4px;
+    }
+
+    #navbar #logo {
+      font-size: 35px;
+      font-weight: bold;
+      transition: 0.4s;
+    }
+
+    #navbar a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    #navbar a.active {
+      background-color: dodgerblue;
+      color: white;
+    }
+
+    #navbar-right {
+      float: right;
+      margin-right: 20px;
+    }
+
+    @media screen and (max-width: 580px) {
+      #navbar {
+        padding: 20px 10px !important;
+      }
+
+      #navbar a {
+        float: none;
+        display: block;
+        text-align: left;
+      }
+
+      #navbar-right {
+        float: none;
+      }
+    }
+
+
+
+    .card_container {
+      display: grid;
+      justify-content: center;
+      align-content: center;
+      gap: 4px;
+      grid-auto-flow: column;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card_container .card {
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 1px 5px #0001, 0 2px 15px #0001;
+      border: 1px solid #0003;
+    }
+
+    .card_container .card .img {
+      height: 255px;
+    }
+
+    .card_container .card .img img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: 0.3s ease-in-out;
+    }
+
+    .card_container .card:hover .img img {
+      transform: scale(1.1) rotate(1deg);
+    }
+
+    .card_container .card .card_footer {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      bottom: 0;
+      text-align: center;
+      text-transform: uppercase;
+      background-color: #2196f342;
+      color: #fff;
+      bottom: -100%;
+      box-shadow: 0 -8px 10px #0002;
+      padding: 35px 10px;
+      backdrop-filter: blur(15px);
+      transition: bottom 0.5s;
+      transition-delay: 1.6s;
+    }
+
+    .card_container .card:hover .card_footer {
+      bottom: 0;
+      transition-delay: 0s;
+    }
+
+    .card_container .card .card_footer .card_text {
+      margin-bottom: 20px;
+      opacity: 0;
+      transform: translateY(-50px);
+      transition: 0.5s;
+      transition-delay: 1s;
+    }
+
+    .card_container .card:hover .card_footer .card_text {
+      opacity: 1;
+      transform: translateY(0);
+      text-shadow: 0 1px 4px #0002;
+    }
+
+    .card_container .card .card_footer .card_text>* {
+      margin: 0;
+      padding: 2px 15px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .card_container .card .card_footer .card_text .designation {
+      font-size: 14px;
+    }
+
+    .card_container .card .card_footer .social_box {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      text-shadow: 0 0 4px #0003;
+    }
+
+    .card_container .card .card_footer .social_box a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 25px;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: 0.4s ease-in;
+      cursor: pointer;
+      transition-delay: calc(0.15s * var(--i));
+    }
+
+    .card_container .card:hover .card_footer .social_box a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card_container .card:hover .card_footer .social_box a .icon {
+      transition: 0.2s ease-in-out;
+    }
+
+    .card_container .card:hover .card_footer .social_box a:hover .icon {
+      color: #80b0ff;
+      text-shadow: 0 1px 4px #fff1;
+    }
+
+    ol .test {
+      list-style-type: auto !important;
+    }
+
+    .details {
+      display: grid;
+      justify-content: center;
+      color: white;
+    }
+
+    .flex-container {
+      display: flex;
+
+      justify-content: center;
+      height: 100%;
+      padding: 15px;
+      gap: 5px;
+    }
+
+    .flex-container>div {
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 0 0 200px rgba(255, 255, 255, 0.05);
+      color: white;
+      width: fit-content;
+      margin: 10px;
+      text-align: center;
+      line-height: 75px;
+      font-size: 30px;
+      border: 3px solid #ffcc80;
+      border-radius: 5px;
+      padding: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="navbar">
+    <a href="#default" id="logo">FitApp</a>
+    <div id="navbar-right">
+      <a href="#home">Home</a>
+      <a href="#contact">Contact</a>
+      <a href="#about">About</a>
+    </div>
+  </div>
+  <div class="container" style="margin-top:85px;padding:15px 15px 50px;">
+    <div class="details">
+      <p>AN APP WHICH FOCUSES ON MAKING AN AESTHETIC BODY
+        WITH PERFECT DIET PLAN BY ONE OF THE BEST TRAINERS
+        AND DIETICIAN.
+      </p>
+    </div>
+
+    <div class="flex-wrap" id="calc-container">
+      <form id="bmi-form">
+        <div id="metric">
+          <div class="form-group">
+            <label for="weight">Weight (KG): </label>
+            <input type="text" id="weight" class="" placeholder="Weight">
+          </div>
+          <div class="form-group">
+            <label for="height">Height (CM): </label>
+            <input type="text" id="height" class="" placeholder="Height">
+          </div>
+          <div class="form-group">
+            <input type="button" value="Submit" onclick="calculateBMI()">
+          </div>
+        </div>
+      </form>
+
+
+      <div class="results-wrap">
+        <div class="text-center">
+          <h2>Results</h2>
+          <div id="error-msg-wrap">
+            <p id="error-msg-txt">
+            </p>
+          </div>
+          <div class="flex-wrap" id="results">
+            <ul>
+              <li><strong>Height: </strong><span id="results-height"></span></li>
+              <li><strong>Weight: </strong><span id="results-weight"></span></li>
+              <li><strong>BMI: </strong><span id="results-bmi"></span></li>
+              <li><strong>Category: </strong><span id="results-cat"></span></li>
+            </ul>
+            <div class="colored-circle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="details">
+    <ol class="test">
+      <h2>
+        Now focusing on how does this work?</h2>
+      <li>
+        By selling courses made by famous and lowkey youtubers whose niche is fitness.(we will be making courses by
+        hiring youtuber’s)
+      </li>
+      <li>
+        By providing them perfect diet with best dieticians
+      </li>
+      <li>
+        Programme will be of 30 days,90 days,180 days and 360 days in which we will provide 30 day free programme for
+        signing up.
+
+      </li>
+      <li>
+        By giving mentorship each week 2 hour live q/a you can ask with your programme trainer.
+      </li>
+      <li>
+        Your calories intake calculator and how much calories do you need to eat/day. Etc
+      </li>
+
+    </ol>
+
+    <ol class="test">
+      <h2>Courses Details</h2>
+      <li>Hours of content from trainer on how to reach your goals.</li>
+      <li>exercise routine and form of workout you need to follow.</li>
+      <li>live q/a session per week.</li>
+      <li>shorts videos on all the workout form how to do it.</li>
+      <li>Your diet plan with perfect calories intake.</li>
+
+    </ol>
+
+  </div>
+
+  <h2 style="text-align: center;font-weight: bold;color: white;">Programme Details</h2>
+  <div class="flex-container">
+
+    <div class="item1">30 days free</div>
+    <div class="item2">30 days</div>
+    <div class="item3">60 days</div>
+    <div class="item4">90 days</div>
+    <div class="item5">180 days</div>
+    <div class="item6">365 days</div>
+
+  </div>
+
+  <h1 style="text-align: center;font-weight: bold;color: white">Our Trainers</h1>
+  <div class="card_container">
+    <div class="card">
+      <div class="img">
+        <img src="p1.jpeg" alt="">
+      </div>
+
+      <div class="card_footer">
+        <div class="card_text">
+          <h5 class="name">Yash Anand</h5>
+          <h6 class="designation">Blogger</h6>
+        </div>
+        <div class="social_box">
+          <a href="#" style="--i:1">
+            <i class="icon fa fa-facebook"></i>
+          </a>
+          <a href="#" style="--i:2">
+            <i class="icon fa fa-twitter"></i>
+          </a>
+          <a href="#" style="--i:3">
+            <i class="icon fa fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="img">
+        <img src="p2.jpeg" alt="">
+      </div>
+
+      <div class="card_footer">
+        <div class="card_text">
+          <h5 class="name">Harsh Gahlot</h5>
+          <h6 class="designation">Blogger</h6>
+        </div>
+        <div class="social_box">
+          <a href="#" style="--i:1">
+            <i class="icon fa fa-facebook"></i>
+          </a>
+          <a href="#" style="--i:2">
+            <i class="icon fa fa-twitter"></i>
+          </a>
+          <a href="#" style="--i:3">
+            <i class="icon fa fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="img">
+        <img src="p3.jpeg" alt="">
+      </div>
+
+      <div class="card_footer">
+        <div class="card_text">
+          <h5 class="name">Saket Gokahle</h5>
+          <h6 class="designation">Blogger</h6>
+        </div>
+        <div class="social_box">
+          <a href="#" style="--i:1">
+            <i class="icon fa fa-facebook"></i>
+          </a>
+          <a href="#" style="--i:2">
+            <i class="icon fa fa-twitter"></i>
+          </a>
+          <a href="#" style="--i:3">
+            <i class="icon fa fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class=" text-center text-lg-start" style="  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 200px rgba(255,255,255,0.05);color: white;">
+    <!-- Copyright -->
+    <div class="text-center p-3">
+      Designed by:
+      <span>Saurav hathi</span>
+      |
+      Author:
+      <span>Shreyash Kar</span>
+    </div>
+    <!-- Copyright -->
+  </footer>
+
+
+  <script>
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+      if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
+        document.getElementById("navbar").style.padding = "10px 10px";
+        document.getElementById("logo").style.fontSize = "25px";
+      } else {
+        document.getElementById("navbar").style.padding = "20px 10px";
+        document.getElementById("logo").style.fontSize = "30px";
+      }
+    }
+  </script>
+
+
+  <script>
+    document.onkeydown = function () {
+      if (window.event.keyCode == '13') {
+        calculateBMI();
+      }
+    }
+
+    const weight = document.getElementById('weight'),
+      weightImperial = document.getElementById('weight-imperial'),
+      height = document.getElementById('height'),
+      heightInches = document.getElementById('height-inches'),
+      heightFeet = document.getElementById('height-feet');
+
+    function calculateBMI() {
+
+      let category;
+      let validData = false;
+
+      let imperial = document.getElementById('imperial'),
+        metric = document.getElementById('metric');
+
+      if (!isMetric) {
+        const lbsToKg = weightImperial.value * .45359237;
+
+        let feetToInches = Number(heightFeet.value) * 12;
+        let totalInches = feetToInches + Number(heightInches.value);
+
+        const heightImperial = totalInches / .39370;
+
+
+        if (validate(weightImperial, heightFeet, heightInches)) {
+          calculate(lbsToKg, heightImperial);
+        }
+      } else if (isMetric || document.getElementById('imperial').style.display === 'none') {
+        if (validate(weight, height)) {
+          calculate(weight, height);
+        }
+      }
+    };
+
+
+    function calculate(weight, height) {
+      const results = document.getElementById('results'),
+        resultsHeight = document.getElementById('results-height'),
+        resultsWeight = document.getElementById('results-weight'),
+        resultsBMI = document.getElementById('results-bmi'),
+        resultsCat = document.getElementById('results-cat'),
+        circle = document.querySelector('.colored-circle');
+      let inches;
+
+      if (isMetric) {
+        BMI = weight.value / (height.value * height.value);
+      } else {
+        BMI = weight / (height * height);
+      }
+
+      BMI = (BMI * 10000).toFixed(2);
+
+      results.style.display = "flex";
+      if (BMI < 16) {
+        circle.style.backgroundColor = "red";
+        category = 'Extremely Underweight';
+      } else if (BMI >= 16.0 && BMI <= 16.99) {
+        circle.style.backgroundColor = "orange";
+        category = 'Underweight';
+      } else if (BMI >= 17 && BMI <= 18.49) {
+        circle.style.backgroundColor = "yellow";
+        category = 'Slightly Underweight';
+      } else if (BMI >= 18.5 && BMI <= 24.9) {
+        circle.style.backgroundColor = "green";
+        category = 'Healthy Weight';
+      } else if (BMI > 24.9 && BMI <= 29.9) {
+        circle.style.backgroundColor = "yellow";
+        category = 'Slightly Overweight';
+      } else if (BMI > 29.9 && BMI <= 34.9) {
+        circle.style.backgroundColor = "orange";
+        category = 'Overweight';
+      } else {
+        circle.style.backgroundColor = "red";
+        category = 'Extremely Overweight';
+      }
+
+      if (isMetric) {
+        resultsBMI.innerText = BMI;
+        resultsHeight.innerText = `${height.value}cm`;
+        resultsWeight.innerText = `${weight.value}kg`;
+        resultsCat.innerText = category;
+      } else {
+        if (heightInches.value == '') {
+          inches = 0;
+        } else {
+          inches = heightInches.value;
+        }
+        resultsBMI.innerText = BMI;
+        resultsHeight.innerText = `${heightFeet.value}ft ${inches}in`;
+        resultsWeight.innerText = `${weightImperial.value}lbs`;
+        resultsCat.innerText = category;
+      }
+    }
+
+
+    function validate(weight, height, inches) {
+
+      const errorMsgWrap = document.getElementById('error-msg-wrap');
+      const errorMsgText = document.getElementById('error-msg-txt');
+
+      function clearError() {
+        errorMsgWrap.style.display = 'none';
+      }
+
+      if (isMetric) {
+
+        if (weight.value === '' || isNaN(weight.value) || weight.value < 1 || weight.value > 600) {
+
+          weight.focus();
+          errorMsg = 'Please fill in the weight field. Must be a valid number.';
+          validData = false;
+
+          errorMsgWrap.style.display = "block";
+          errorMsgText.innerText = errorMsg;
+
+
+          setTimeout(clearError, 3000);
+          return;
+        } else if (height.value === '' || isNaN(height.value) || height.value < 1 || height.value > 600) {
+          height.focus();
+          errorMsg = 'Please fill in the height field. Must be a valid number.';
+          validData = false;
+
+          errorMsgWrap.style.display = "block";
+          errorMsgText.innerText = errorMsg;
+
+
+          setTimeout(clearError, 3000);
+          return;
+        } else {
+          validData = true;
+        }
+      } else {
+
+        if (weight.value === '' || isNaN(weight.value) || weight.value < 1 || weight.value > 600) {
+
+          weight.focus();
+          errorMsg = 'Please fill in the weight field. Must be a valid number.';
+          validData = false;
+
+          errorMsgWrap.style.display = "block";
+          errorMsgText.innerText = errorMsg;
+
+
+          setTimeout(clearError, 3000);
+          return;
+        } else if (height.value === '' || isNaN(height.value) || height.value < 1 || height.value > 600) {
+          console.log('this was put in the height field: ' + height.value);
+          errorMsg = 'Please fill in the feet field. Must be a valid number.';
+          validData = false;
+
+          errorMsgWrap.style.display = "block";
+          errorMsgText.innerText = errorMsg;
+
+          setTimeout(clearError, 3000);
+          return;
+        } else if (inches !== undefined) {
+          console.log('should be metric');
+          if (isNaN(inches.value)) {
+            errorMsg = 'The inches field must be a number';
+            validData = false;
+
+            errorMsgWrap.style.display = "block";
+            errorMsgText.innerText = errorMsg;
+
+            setTimeout(clearError, 3000);
+            return;
+          }
+        } else {
+          validData = true;
+        }
+      }
+      return validData;
+    }
+
+    let isMetric = true;
+
+    function switchToImperial() {
+      imperial = document.getElementById('imperial');
+      metric = document.getElementById('metric');
+
+      metric.style.display = 'none';
+      imperial.style.display = 'block';
+      imperial.style.animation = 'fadeIn 500ms linear';
+      isMetric = false;
+    }
+
+    function switchToMetric() {
+      imperial = document.getElementById('imperial');
+      metric = document.getElementById('metric');
+
+      metric.style.display = 'block';
+      metric.style.animation = 'fadeIn 800ms linear';
+      imperial.style.display = 'none';
+
+      isMetric = true;
+    }
+  </script>
+</body>
+
+</html>
